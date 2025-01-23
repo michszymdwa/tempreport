@@ -40,13 +40,18 @@ class TemperatureReporter:
         except (GeocoderTimedOut, GeocoderUnavailable) as e:
             raise ConnectionError(f"Could not connect to geocoding service: {e}")
 
+    def _celsius_to_fahrenheit(self, celsius):
+        """Convert Celsius to Fahrenheit"""
+        return (celsius * 9/5) + 32 if celsius is not None else None
+
     def get_current_temperature(self):
-        """Get the current temperature for the location"""
+        """Get the current temperature for the location in Fahrenheit"""
         now = datetime.now()
         data = Hourly(self.point, now, now).fetch()
         
         if not data.empty:
-            return data.iloc[-1]['temp']
+            celsius_temp = data.iloc[-1]['temp']
+            return self._celsius_to_fahrenheit(celsius_temp)
         return None
 
 
@@ -63,13 +68,13 @@ def main():
         reporter = TemperatureReporter(location_name="Paris, France")
         temp = reporter.get_current_temperature()
         if temp is not None:
-            print(f"Current temperature in Paris: {temp}°C")
+            print(f"Current temperature in Paris: {temp:.1f}°F")
         
         # Using the legacy Wrocław reporter
         wroclaw = WroclawTemperature()
         temp = wroclaw.get_current_temperature()
         if temp is not None:
-            print(f"Current temperature in Wrocław: {temp}°C")
+            print(f"Current temperature in Wrocław: {temp:.1f}°F")
             
     except (ValueError, ConnectionError) as e:
         print(f"Error: {e}")
