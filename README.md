@@ -1,6 +1,13 @@
-# Wrocław Temperature Reporter
+# Temperature Reporter
 
-A simple Python class that fetches the current temperature in Wrocław, Poland using the meteostat library.
+A simple Python application that fetches current temperature data for any location using the Meteostat API.
+
+## Features
+
+- Get current temperature for any location worldwide
+- Support for location lookup using city names or coordinates
+- Backwards compatibility with Wrocław-specific functionality
+- Error handling for location lookup and temperature fetching
 
 ## Installation
 
@@ -10,34 +17,61 @@ git clone https://github.com/michszymdwa/tempreport.git
 cd tempreport
 ```
 
-2. Install the required packages:
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
 ## Usage
 
+### Basic usage with location name:
+
+```python
+from temp_reporter import TemperatureReporter
+
+# Create a reporter for any city
+reporter = TemperatureReporter(location_name="London, UK")
+temp = reporter.get_current_temperature()
+print(f"Current temperature: {temp}°C")
+```
+
+### Using coordinates:
+
+```python
+reporter = TemperatureReporter(
+    latitude=51.1079,
+    longitude=17.0385,
+    elevation=120  # optional
+)
+temp = reporter.get_current_temperature()
+```
+
+### Legacy Wrocław usage:
+
 ```python
 from temp_reporter import WroclawTemperature
 
-# Create an instance of the temperature reporter
 reporter = WroclawTemperature()
-
-# Get the current temperature
-temperature = reporter.get_current_temperature()
-
-if temperature is not None:
-    print(f"Current temperature in Wrocław: {temperature}°C")
-else:
-    print("Unable to fetch temperature data")
+temp = reporter.get_current_temperature()
 ```
 
-You can also run the script directly:
-```bash
-python temp_reporter.py
-```
+## Dependencies
 
-## Requirements
-- Python 3.6+
-- meteostat>=1.6.5
-- python-dateutil>=2.8.2
+- meteostat: For fetching temperature data
+- geopy: For location geocoding
+- python-dateutil: For date handling
+
+## Error Handling
+
+The application handles various error cases:
+- Invalid location names
+- Geocoding service unavailability
+- Missing temperature data
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
